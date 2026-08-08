@@ -13,25 +13,31 @@ import { validateAuthInput } from '../utils/validators.js';
 // };
 
 export const registerUser = async (req, res, next) => {
-  try {
-    console.log('REGISTER CONTROLLER HIT');
-    console.log('REGISTER BODY:', req.body);
+  console.log('REGISTER CONTROLLER HIT');
+  console.log('REGISTER BODY:', req.body);
 
+  try {
     await validateAuthInput(req, res, next);
 
     console.log('VALIDATION PASSED');
+    
+    if (res.headersSent) {
+      console.log('HEADERS ALREADY SENT');
+      return;
+    }
 
-    if (res.headersSent) return;
+    console.log('CALLING REGISTER SERVICE');
 
     const result = await registerUserService(req.body);
 
-    console.log('REGISTER SERVICE PASSED');
+    console.log('REGISTER SERVICE SUCCESS:', result);
 
     res.status(201).json({
       success: true,
       message: 'User registered successfully',
-      data: result
+      data: result,
     });
+
   } catch (error) {
     console.log('REGISTER ERROR:', error);
     next(error);
