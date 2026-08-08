@@ -42,6 +42,14 @@ app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', environment: env.nodeEnv });
 });
 
+console.log(
+  'AUTH ROUTES:',
+  authRoutes.stack?.map(route => ({
+    path: route.route?.path,
+    methods: route.route?.methods
+  }))
+);
+
 app.use('/api/auth', authRoutes);
 app.use('/api/jobs', jobRoutes);
 
