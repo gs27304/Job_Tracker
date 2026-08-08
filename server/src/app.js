@@ -18,7 +18,15 @@ const limiter = rateLimit({ windowMs: 15 * 60 * 1000, max: 200, standardHeaders:
 app.use(helmet());
 app.use(limiter);
 app.use(cors({
-  origin: env.clientUrl,
+  origin: (origin, callback) => {
+    if (!origin) return callback(null, true);
+    const cleanClientUrl = env.clientUrl ? env.clientUrl.replace(/\/+$/, '') : '';
+    const allowed = [cleanClientUrl, 'http://localhost:5173', 'http://localhost:3000'].filter(Boolean);
+    if (allowed.includes(origin) || origin.endsWith('.vercel.app')) {
+      return callback(null, true);
+    }
+    return callback(null, true);
+  },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
