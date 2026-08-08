@@ -27,7 +27,7 @@ export const validateJobInput = async (req, res, next) => {
     body('company').optional().isString().trim().isLength({ min: 2, max: 150 }),
     body('role').optional().isString().trim().isLength({ min: 2, max: 150 }),
     body('notes').optional().isString().trim().isLength({ max: 2000 }),
-    body('status').optional().isIn(['Applied', 'Interview', 'Offer', 'Rejected', 'Wishlist']),
+    body('status').optional().isIn(['Applied', 'Interview', 'OA', 'Offer', 'Rejected', 'Wishlist']),
   ]);
 
   return handleValidation(req, res, next);
