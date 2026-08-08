@@ -1,13 +1,39 @@
 import { getCurrentUserService, loginUserService, registerUserService } from '../services/authService.js';
 import { validateAuthInput } from '../utils/validators.js';
 
+// export const registerUser = async (req, res, next) => {
+//   try {
+//     await validateAuthInput(req, res, next);
+//     if (res.headersSent) return;
+//     const result = await registerUserService(req.body);
+//     res.status(201).json({ success: true, message: 'User registered successfully', data: result });
+//   } catch (error) {
+//     next(error);
+//   }
+// };
+
 export const registerUser = async (req, res, next) => {
   try {
+    console.log('REGISTER CONTROLLER HIT');
+    console.log('REGISTER BODY:', req.body);
+
     await validateAuthInput(req, res, next);
+
+    console.log('VALIDATION PASSED');
+
     if (res.headersSent) return;
+
     const result = await registerUserService(req.body);
-    res.status(201).json({ success: true, message: 'User registered successfully', data: result });
+
+    console.log('REGISTER SERVICE PASSED');
+
+    res.status(201).json({
+      success: true,
+      message: 'User registered successfully',
+      data: result
+    });
   } catch (error) {
+    console.log('REGISTER ERROR:', error);
     next(error);
   }
 };
