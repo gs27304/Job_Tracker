@@ -50,6 +50,12 @@ console.log(
   }))
 );
 
+app.post('/api/test-register', (req, res) => {
+  res.json({
+    success: true,
+    message: 'POST route works'
+  });
+});
 app.use('/api/auth', authRoutes);
 app.use('/api/jobs', jobRoutes);
 
