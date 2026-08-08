@@ -1,55 +1,29 @@
 import { getCurrentUserService, loginUserService, registerUserService } from '../services/authService.js';
-import { validateAuthInput } from '../utils/validators.js';
 
-// export const registerUser = async (req, res, next) => {
-//   try {
-//     await validateAuthInput(req, res, next);
-//     if (res.headersSent) return;
-//     const result = await registerUserService(req.body);
-//     res.status(201).json({ success: true, message: 'User registered successfully', data: result });
-//   } catch (error) {
-//     next(error);
-//   }
-// };
 
 export const registerUser = async (req, res, next) => {
-  console.log('REGISTER CONTROLLER HIT');
-  console.log('REGISTER BODY:', req.body);
-
   try {
-    await validateAuthInput(req, res, next);
-
-    console.log('VALIDATION PASSED');
-    
-    if (res.headersSent) {
-      console.log('HEADERS ALREADY SENT');
-      return;
-    }
-
-    console.log('CALLING REGISTER SERVICE');
-
     const result = await registerUserService(req.body);
-
-    console.log('REGISTER SERVICE SUCCESS:', result);
 
     res.status(201).json({
       success: true,
       message: 'User registered successfully',
-      data: result,
+      data: result
     });
-
   } catch (error) {
-    console.log('REGISTER ERROR:', error);
     next(error);
   }
 };
 
 export const loginUser = async (req, res, next) => {
   try {
-    await validateAuthInput(req, res, next);
-    if (res.headersSent) return;
     const result = await loginUserService(req.body);
-    res.status(200).json({ success: true, message: 'Login successful', data: result });
+
+    res.status(200).json({
+      success: true,
+      message: 'Login successful',
+      data: result
+    });
   } catch (error) {
     next(error);
   }
