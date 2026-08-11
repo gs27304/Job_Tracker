@@ -43,6 +43,13 @@ export const AuthProvider = ({ children }) => {
     return data.data.user;
   };
 
+  const guestLogin = async () => {
+    const { data } = await api.post('/auth/guest-login');
+    localStorage.setItem('token', data.data.token);
+    setUser(data.data.user);
+    return data.data.user;
+  };
+
   const logout = async () => {
     try {
       await api.post('/auth/logout');
@@ -54,7 +61,7 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const value = useMemo(() => ({ user, loading, login, register, logout }), [user, loading]);
+  const value = useMemo(() => ({ user, loading, login, guestLogin, register, logout }), [user, loading]);
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };

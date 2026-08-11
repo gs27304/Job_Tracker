@@ -109,11 +109,12 @@ const BriefcaseIcon = () => (
 );
 
 function LoginPage() {
-  const { login } = useAuth();
+  const { login, guestLogin } = useAuth();
   const navigate = useNavigate();
   const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm();
   const [serverError, setServerError] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [isGuestLoading, setIsGuestLoading] = useState(false);
   const toast = useAppToast();
 
   const onSubmit = async (values) => {
@@ -126,6 +127,22 @@ function LoginPage() {
       const message = getErrorMessage(err);
       setServerError(message);
       toast.error(message);
+    }
+  };
+
+  const handleGuestLogin = async () => {
+    setServerError('');
+    setIsGuestLoading(true);
+    try {
+      await guestLogin();
+      toast.success('Logged in as Interviewer Demo');
+      navigate('/dashboard');
+    } catch (err) {
+      const message = getErrorMessage(err);
+      setServerError(message);
+      toast.error(message);
+    } finally {
+      setIsGuestLoading(false);
     }
   };
 
@@ -320,8 +337,68 @@ function LoginPage() {
             </button>
           </form>
 
+          {/* ══ DEMO ACCOUNT / INTERVIEWER ACCESS SECTION ══ */}
+          <div style={{ marginTop: '20px', paddingTop: '16px', borderTop: '1px dashed #e2e8f0' }}>
+            <div style={{ background: '#f0fdf4', border: '1px solid #bbf7d0', borderRadius: '14px', padding: '14px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '10px' }}>
+                <span style={{ fontSize: '11.5px', fontWeight: '700', color: '#166534', letterSpacing: '0.4px', textTransform: 'uppercase' }}>
+                  💼 Interviewer Access
+                </span>
+                <span style={{ fontSize: '10.5px', background: '#dcfce7', color: '#15803d', padding: '2px 8px', borderRadius: '10px', fontWeight: '600' }}>
+                  1-Click Demo
+                </span>
+              </div>
+
+              <button
+                type="button"
+                onClick={handleGuestLogin}
+                disabled={isGuestLoading || isSubmitting}
+                style={{
+                  width: '100%',
+                  background: (isGuestLoading || isSubmitting) ? '#86efac' : '#16a34a',
+                  color: '#fff',
+                  border: 'none',
+                  borderRadius: '10px',
+                  padding: '11px',
+                  fontSize: '14px',
+                  fontWeight: '600',
+                  cursor: (isGuestLoading || isSubmitting) ? 'not-allowed' : 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '8px',
+                  boxShadow: '0 3px 10px rgba(22,163,74,0.25)',
+                  transition: 'background 0.2s, transform 0.1s',
+                }}
+                onMouseEnter={e => { if (!isGuestLoading && !isSubmitting) e.target.style.background = '#15803d'; }}
+                onMouseLeave={e => { if (!isGuestLoading && !isSubmitting) e.target.style.background = '#16a34a'; }}
+              >
+                {isGuestLoading ? (
+                  <>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" style={{ animation: 'spin 0.8s linear infinite' }}>
+                      <circle cx="12" cy="12" r="10" strokeOpacity="0.25"/>
+                      <path d="M12 2a10 10 0 0 1 10 10" strokeLinecap="round"/>
+                    </svg>
+                    Logging in as Guest...
+                  </>
+                ) : (
+                  <>
+                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                      <circle cx="12" cy="7" r="4"></circle>
+                    </svg>
+                    Continue as Guest
+                  </>
+                )}
+              </button>
+              <div style={{ marginTop: '8px', fontSize: '11px', color: '#15803d', textAlign: 'center', lineHeight: '1.4' }}>
+                Email: <strong>interviewer@demo.com</strong> &nbsp;•&nbsp; Pass: <strong>InterviewerDemo2026!</strong>
+              </div>
+            </div>
+          </div>
+
           {/* Register link */}
-          <p style={{ marginTop: '22px', fontSize: '13px', color: '#94a3b8', textAlign: 'center' }}>
+          <p style={{ marginTop: '18px', fontSize: '13px', color: '#94a3b8', textAlign: 'center' }}>
             Don't have an account?{' '}
             <Link to="/register" style={{ color: '#0d9488', fontWeight: '600', textDecoration: 'none' }}>
               Register

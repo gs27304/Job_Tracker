@@ -123,6 +123,17 @@ function DashboardPage() {
 
   return (
     <div className="space-y-6">
+      {user?.role === 'guest' && (
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between rounded-xl bg-emerald-50 border border-emerald-200 p-4 text-sm text-emerald-900 dark:bg-emerald-950/40 dark:border-emerald-800 dark:text-emerald-200 gap-2">
+          <div className="flex items-center gap-2">
+            <span className="inline-flex items-center rounded-md bg-emerald-200 px-2.5 py-1 text-xs font-bold text-emerald-900 dark:bg-emerald-800 dark:text-emerald-100 uppercase tracking-wide">
+              Interviewer Demo Mode
+            </span>
+            <span>You have full access to explore features, filter data, and create/edit applications. Destructive delete actions are restricted.</span>
+          </div>
+        </div>
+      )}
+
       <div className="rounded-2xl bg-white p-6 shadow-sm dark:bg-slate-900">
         <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
           <div>

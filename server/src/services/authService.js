@@ -17,12 +17,12 @@ export const registerUserService = async ({ name, email, password }) => {
     throw new AppError('User already exists', 400);
   }
 
-  const user = await User.create({ name, email, password });
+  const user = await User.create({ name, email, password, role: 'user' });
   const token = generateToken(user);
 
   return {
     token,
-    user: { id: user._id, name: user.name, email: user.email },
+    user: { id: user._id, name: user.name, email: user.email, role: user.role || 'user' },
   };
 };
 
@@ -45,7 +45,33 @@ export const loginUserService = async ({ email, password }) => {
 
   return {
     token,
-    user: { id: user._id, name: user.name, email: user.email },
+    user: { id: user._id, name: user.name, email: user.email, role: user.role || 'user' },
+  };
+};
+
+export const guestLoginService = async () => {
+  const guestEmail = process.env.GUEST_EMAIL || 'interviewer@demo.com';
+  const guestPassword = process.env.GUEST_PASSWORD || 'InterviewerDemo2026!';
+
+  let user = await User.findOne({ email: guestEmail });
+
+  if (!user) {
+    user = await User.create({
+      name: 'Interviewer Demo',
+      email: guestEmail,
+      password: guestPassword,
+      role: 'guest',
+    });
+  } else if (user.role !== 'guest') {
+    user.role = 'guest';
+    await user.save();
+  }
+
+  const token = generateToken(user);
+
+  return {
+    token,
+    user: { id: user._id, name: user.name, email: user.email, role: user.role },
   };
 };
 

@@ -1,4 +1,4 @@
-import { getCurrentUserService, loginUserService, registerUserService } from '../services/authService.js';
+import { getCurrentUserService, guestLoginService, loginUserService, registerUserService } from '../services/authService.js';
 
 
 export const registerUser = async (req, res, next) => {
@@ -22,6 +22,20 @@ export const loginUser = async (req, res, next) => {
     res.status(200).json({
       success: true,
       message: 'Login successful',
+      data: result
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const guestLogin = async (req, res, next) => {
+  try {
+    const result = await guestLoginService();
+
+    res.status(200).json({
+      success: true,
+      message: 'Guest login successful',
       data: result
     });
   } catch (error) {
