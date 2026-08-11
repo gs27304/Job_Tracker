@@ -1,4 +1,8 @@
-import { Link } from 'react-router-dom';
+import { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
+import { useAppToast } from '../hooks/useAppToast';
+import { getErrorMessage } from '../utils/helpers';
 
 /* ── inline SVG illustration (4 people, flat vector style) ── */
 const TeamIllustration = () => (
@@ -120,6 +124,24 @@ const BriefcaseIcon = () => (
 );
 
 function HomePage() {
+  const { guestLogin } = useAuth();
+  const navigate = useNavigate();
+  const toast = useAppToast();
+  const [isGuestLoading, setIsGuestLoading] = useState(false);
+
+  const handleGuestLogin = async () => {
+    setIsGuestLoading(true);
+    try {
+      await guestLogin();
+      toast.success('Logged in as Interviewer Demo');
+      navigate('/dashboard');
+    } catch (err) {
+      const message = getErrorMessage(err);
+      toast.error(message);
+    } finally {
+      setIsGuestLoading(false);
+    }
+  };
   return (
     <div
       style={{
@@ -418,6 +440,66 @@ function HomePage() {
                 Create an Account
               </Link>
             </div>
+
+            {/* ══ DEMO ACCOUNT / INTERVIEWER ACCESS SECTION ══ */}
+            <div style={{ marginTop: '20px', paddingTop: '16px', borderTop: '1px dashed #e2e8f0' }}>
+              <div style={{ background: '#f0fdf4', border: '1px solid #bbf7d0', borderRadius: '14px', padding: '14px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '10px' }}>
+                  <span style={{ fontSize: '11.5px', fontWeight: '700', color: '#166534', letterSpacing: '0.4px', textTransform: 'uppercase' }}>
+                    💼 Interviewer Access
+                  </span>
+                  <span style={{ fontSize: '10.5px', background: '#dcfce7', color: '#15803d', padding: '2px 8px', borderRadius: '10px', fontWeight: '600' }}>
+                    1-Click Demo
+                  </span>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={handleGuestLogin}
+                  disabled={isGuestLoading}
+                  style={{
+                    width: '100%',
+                    background: isGuestLoading ? '#86efac' : '#16a34a',
+                    color: '#fff',
+                    border: 'none',
+                    borderRadius: '10px',
+                    padding: '11px',
+                    fontSize: '14px',
+                    fontWeight: '600',
+                    cursor: isGuestLoading ? 'not-allowed' : 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '8px',
+                    boxShadow: '0 3px 10px rgba(22,163,74,0.25)',
+                    transition: 'background 0.2s, transform 0.1s',
+                  }}
+                  onMouseEnter={e => { if (!isGuestLoading) e.target.style.background = '#15803d'; }}
+                  onMouseLeave={e => { if (!isGuestLoading) e.target.style.background = '#16a34a'; }}
+                >
+                  {isGuestLoading ? (
+                    <>
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" style={{ animation: 'spin 0.8s linear infinite' }}>
+                        <circle cx="12" cy="12" r="10" strokeOpacity="0.25"/>
+                        <path d="M12 2a10 10 0 0 1 10 10" strokeLinecap="round"/>
+                      </svg>
+                      Logging in as Guest...
+                    </>
+                  ) : (
+                    <>
+                      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="12" cy="7" r="4"></circle>
+                      </svg>
+                      Continue as Guest
+                    </>
+                  )}
+                </button>
+                <div style={{ marginTop: '8px', fontSize: '11px', color: '#15803d', textAlign: 'center', lineHeight: '1.4' }}>
+                  Email: <strong>interviewer@demo.com</strong> &nbsp;•&nbsp; Pass: <strong>InterviewerDemo2026!</strong>
+                </div>
+              </div>
+            </div>
           </div>
 
           {/* Footer */}
@@ -434,6 +516,9 @@ function HomePage() {
           </p>
         </div>
       </div>
+
+      {/* Spin animation */}
+      <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
     </div>
   );
 }
